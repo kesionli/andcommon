@@ -9,9 +9,10 @@ task androidSourcesJar(type: Jar) {
     exclude "**/BuildConfig.class"
 }
 
+
 ext {
     PUBLISH_GROUP_ID = 'io.gitee.lgsg'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.0.1'
 }
 
 ext["signing.keyId"] = ''
@@ -41,8 +42,8 @@ publishing {
             version PUBLISH_VERSION
 
             // Two artifacts, the `aar` and the sources
-//            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
-            artifact("$buildDir/outputs/aar/andcommon.aar")
+            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+//            artifact("$buildDir/libs/andcommon.jar")
             artifact androidSourcesJar
 
             // Self-explanatory metadata for the most part

@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion '25.0.0'
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 20
+        versionCode 13
+        versionName "1.0.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+}
+
+ext {
+    PUBLISH_GROUP_ID = "com.kesion.andcommon"		//项目包名
+    PUBLISH_ARTIFACT_ID = 'andcommon'			//项目名
+    PUBLISH_VERSION = '1.0.0'					//版本号
+}
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+}
+
+task makeJar( type: Jar) {
+//删除存在的
+    delete 'build/libs/andcommon.jar'
+    archiveName 'andcommon.jar'//目标jar包名称
+//设置拷贝的文件
+    from(project.zipTree('build/intermediates/intermediate-jars/release/classes.jar'))//此行很重要，否则该项目编写的代码无法打进jar包，具体路径与gradle版本有关，//之前网上说的都是老版本的路径，害我浪费半天时间
+//    from(project.zipTree("libs/iscpu-sdk.jar"))//第三方jar包
+//    from(project.zipTree("libs/dexmaker-1.0.jar"))//第三方jar包
+    include('com/**')
+    include('**/')
+    exclude ('com.kesion/BuildConfig.class')//需排除一些无用文件
+    exclude ('com.kesion/BuildConfig\$*.class')
+    //打进jar包后的文件目录
+    destinationDir=file('build/libs')
+}
+makeJar.dependsOn(build)
