@@ -1,0 +1,87 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.source
+    archiveClassifier = 'sources'
+}
+
+ext {
+    PUBLISH_GROUP_ID = "com.gitee.lgsg" //
+    PUBLISH_ARTIFACT_ID = 'andcommon'            //项目名
+    PUBLISH_VERSION = '1.0.1'                //版本号
+}
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.secretKeyRingFile"] = ''
+ext["ossrhUsername"] = ''
+ext["ossrhPassword"] = ''
+File secretPropsFile = project.rootProject.file('local.properties')
+if (secretPropsFile.exists()) {
+    println "Found secret props file, loading props"
+    Properties p = new Properties()
+    p.load(new FileInputStream(secretPropsFile))
+    p.each { name, value ->
+        ext[name] = value
+    }
+} else {
+    println "No props file, loading env vars"
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+//            from components.java
+            groupId PUBLISH_GROUP_ID
+            artifactId PUBLISH_ARTIFACT_ID
+            version PUBLISH_VERSION
+            artifact sourcesJar
+            pom {
+                name = 'android common'
+                description = 'lgsg android common'
+                url = 'https://gitee.com/lgsg/andcommon'
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                        comments = 'A business-friendly OSS license'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'lgsg'  //Sonatype Jira上的username
+                        name = 'lgsg' //Sonatype Jira上的username
+                        email = '328711370@qq.com'
+                    }
+                }
+                scm {
+                    //修改成你的Git地址：
+                    connection = 'scm:git:gitee.com/lgsg/andcommon.git'
+                    developerConnection = 'scm:git:ssh://gitee.com/lgsg/andcommon.git'
+                    //分支地址：
+                    url = 'https://gitee.com/lgsg/andcommon/tree/master'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // any other name that's descriptive for you
+            name = "Releases"
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            // You only need this if you want to publish snapshots, otherwise just set the URL
+            // to the release repo directly
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            // The username and password we've fetched earlier
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
+}
+signing {
+    sign publishing.publications.mavenJava
+}

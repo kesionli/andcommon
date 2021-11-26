@@ -40,7 +40,8 @@ public class Network {
         Wifi(1),
         Net2G(2),
         Net3G(3),
-        Net4G(4);
+        Net4G(4),
+        Ethrent(9);
 
         NetWorkType(int value) {
             this.value = value;
@@ -309,6 +310,8 @@ public class Network {
                     default:
                         return NetWorkType.UnKnown;
                 }
+            case ConnectivityManager.TYPE_ETHERNET:
+                return NetWorkType.Ethrent;
             default:
                 return NetWorkType.UnKnown;
         }

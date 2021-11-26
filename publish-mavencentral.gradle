@@ -9,12 +9,6 @@ task androidSourcesJar(type: Jar) {
     exclude "**/BuildConfig.class"
 }
 
-
-ext {
-    PUBLISH_GROUP_ID = 'io.gitee.lgsg'
-    PUBLISH_VERSION = '1.0.1'
-}
-
 ext["signing.keyId"] = ''
 ext["signing.password"] = ''
 ext["signing.secretKeyRingFile"] = ''
@@ -42,7 +36,7 @@ publishing {
             version PUBLISH_VERSION
 
             // Two artifacts, the `aar` and the sources
-            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+            artifact("$buildDir/outputs/aar/${project.getName()}.aar")
 //            artifact("$buildDir/libs/andcommon.jar")
             artifact androidSourcesJar
 
@@ -69,8 +63,8 @@ publishing {
                 // Version control info, if you're using GitHub, follow the format as seen here
                 scm {
                     //修改成你的Git地址：
-                    connection = 'scm:git:github.com/lgsg/andcommon.git'
-                    developerConnection = 'scm:git:ssh://github.com/lgsg/andcommon.git'
+                    connection = 'scm:git:gitee.com/lgsg/andcommon.git'
+                    developerConnection = 'scm:git:ssh://gitee.com/lgsg/andcommon.git'
                     //分支地址：
                     url = 'https://github.com/lgsg/andcommon/tree/master'
                 }
